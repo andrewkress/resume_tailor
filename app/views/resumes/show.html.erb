@@ -1,0 +1,18 @@
+<h1>Résumé #<%= @resume.id %></h1>
+<p>Status: <strong><%= @resume.status %></strong></p>
+<p>Job Description: <%= @resume.job_description.truncate(200) %></p>
+
+<% if @resume.status == 'completed' %>
+  <h2>Optimized Versions</h2>
+  <% @resume.optimized_resumes.each do |opt| %>
+    <div>
+      <%= link_to "Download PDF", opt.s3_url, target: "_blank" %>
+    </div>
+  <% end %>
+<% elsif @resume.status == 'processing' %>
+  <p>⏳ Optimization in progress... refresh in a moment.</p>
+<% elsif @resume.status == 'failed' %>
+  <p>❌ Something went wrong. Please try again.</p>
+<% end %>
+
+<%= link_to "Back to Dashboard", resumes_path %>

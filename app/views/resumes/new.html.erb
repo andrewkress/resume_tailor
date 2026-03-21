@@ -1,0 +1,15 @@
+<h1>Upload Your Résumé</h1>
+
+<%= form_with model: @resume, url: resumes_path do |f| %>
+  <div>
+    <%= f.label :original_file, "Upload Résumé (PDF or DOCX)" %>
+    <%= f.file_field :original_file, accept: ".pdf,.docx" %>
+  </div>
+
+  <div>
+    <%= f.label :job_description, "Paste Job Description" %>
+    <%= f.text_area :job_description, rows: 12, placeholder: "Paste the full job description here..." %>
+  </div>
+
+  <%= f.submit "Optimize My Résumé" %>
+<% end %>

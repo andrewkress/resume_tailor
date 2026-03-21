@@ -1,0 +1,9 @@
+<h1>My Résumés</h1>
+<%= link_to "Upload New Résumé", new_resume_path %>
+
+<% @resumes.each do |resume| %>
+  <div>
+    <%= link_to "Résumé ##{resume.id}", resume_path(resume) %>
+    — <%= resume.status %> — <%= resume.created_at.strftime("%b %d, %Y") %>
+  </div>
+<% end %>
