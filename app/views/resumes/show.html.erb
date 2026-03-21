@@ -6,7 +6,7 @@
   <h2>Optimized Versions</h2>
   <% @resume.optimized_resumes.each do |opt| %>
     <div>
-      <%= link_to "Download PDF", opt.s3_url, target: "_blank" %>
+      <%= link_to "Download PDF", opt.pdf, target: "_blank" %>
     </div>
   <% end %>
 <% elsif @resume.status == 'processing' %>
