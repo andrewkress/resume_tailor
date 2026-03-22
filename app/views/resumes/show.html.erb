@@ -1,14 +1,14 @@
 <div class="mb-8">
   <div class="flex items-center justify-between">
     <div>
-      <h1 class="text-3xl font-bold text-gray-900">RÉSUMÉ ##{@resume.id}</h1>
+      <h1 class="text-3xl font-bold text-gray-900">RÉSUMÉ <%= @resume.id %></h1>
       <p class="text-gray-500 mt-1">Created: <%= @resume.created_at.strftime("%B %d, %Y at %I:%M %p") %></p>
     </div>
     <%= link_to "Back to Dashboard", resumes_path, class: "text-gray-600 hover:text-gray-900 px-4 py-2 rounded-lg transition-colors" %>
   </div>
 </div>
 
-<%= if @resume.status == 'completed' %>
+<% if @resume.status == 'completed' %>
   <!-- Completed Card -->
   <div class="card mb-6">
     <div class="flex items-center space-x-3 mb-4">
@@ -31,7 +31,7 @@
               </svg>
               <span class="text-gray-700">Optimized PDF</span>
             </div>
-            <%= link_to "Download", opt.pdf, target: "_blank", class: "text-green-600 hover:text-green-700 font-medium flex items-center px-3 py-1.5 rounded-lg hover:bg-green-50 transition-colors" do %>
+            <%= link_to opt.pdf, target: "_blank", class: "text-green-600 hover:text-green-700 font-medium flex items-center px-3 py-1.5 rounded-lg hover:bg-green-50 transition-colors" do %>
               <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
               </svg>

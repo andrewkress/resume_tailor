@@ -10,11 +10,8 @@
     <% end %>
     <%= f.file_field :original_file,
       accept: ".pdf,.docx",
-      class: "block w-full mt-2 px-4 py-3 border border-gray-300 rounded-lg cursor-pointer
-               bg-white text-gray-700
-               focus:ring-2 focus:ring-primary-500 focus:border-primary-500
-               outline-none transition-all
-               <%= 'border-dashed border-2 border-primary-400 bg-primary-50 text-primary-600' if f.object.original_file.present? %>" %>
+      class: "block w-full mt-2 px-4 py-3 border border-gray-300 rounded-lg cursor-pointer bg-white text-gray-700 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all" %>
+          
     <% if f.object.original_file.present? %>
       <p class="mt-2 text-sm text-green-600 flex items-center">
         <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">

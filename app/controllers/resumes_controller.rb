@@ -6,9 +6,9 @@ class ResumesController < ApplicationController
 
     # Calculate stats for dashboard
     total = @resumes.count
-    completed = @resumes.count { |r| r.status == 'completed' }
-    processing = @resumes.count { |r| r.status == 'processing' }
-    failed = @resumes.count { |r| r.status == 'failed' }
+    completed = @resumes.count { |r| r.status == "completed" }
+    processing = @resumes.count { |r| r.status == "processing" }
+    failed = @resumes.count { |r| r.status == "failed" }
     @stats = {
       total: total,
       completed: completed,
