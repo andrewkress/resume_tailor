@@ -14,6 +14,6 @@ class Resume < ApplicationRecord
   private
 
   def set_default_status
-    self.status ||= 'pending'
+    self.status ||= "pending"
   end
 end

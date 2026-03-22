@@ -16,7 +16,6 @@ class OptimizeResumeJob < ApplicationJob
 
     # 4. Save the optimized resume PDF
     optimized_resume = resume.optimized_resumes.create!
-    debugger
     optimized_resume.pdf.attach(io: pdf, filename: "optimized_resume.pdf", content_type: "application/pdf")
     resume.update!(status: "completed")
   rescue => e

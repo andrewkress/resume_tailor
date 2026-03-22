@@ -41,26 +41,27 @@ gem "thruster", require: false
 gem "image_processing", "~> 1.2"
 
 # Auth
-gem 'devise'
+gem "devise"
 
 # AWS
-gem 'aws-sdk-bedrockruntime'
-gem 'aws-sdk-s3'
+gem "aws-sdk-bedrockruntime"
+gem "aws-sdk-s3"
 
 # PDF generation
-gem 'prawn'
-gem 'prawn-table'
+gem "prawn"
+gem "prawn-table"
+gem "prawndown"
 
 # Word doc text extraction
-gem 'docx'
+gem "docx"
 
 # PDF text extraction
-gem 'pdf-reader'
+gem "pdf-reader"
 
 # Background jobs (recommended)
-gem 'sidekiq'
+gem "sidekiq"
 
-gem 'dotenv-rails'
+gem "dotenv-rails"
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
@@ -73,6 +74,11 @@ group :development, :test do
   gem "brakeman", require: false
 
   # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
+  gem "rubocop-rails-omakase", require: false
+  gem "rubocop", require: false
+  gem "rubocop-performance", require: false
+  gem "rubocop-rails", require: false
+  gem "rubocop-rspec", require: false
   gem "rubocop-rails-omakase", require: false
 end
 
