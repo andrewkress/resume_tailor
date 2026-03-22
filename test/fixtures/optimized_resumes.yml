@@ -2,10 +2,6 @@
 
 one:
   resume: one
-  s3_url: MyString
-  s3_key: MyString
 
 two:
   resume: two
-  s3_url: MyString
-  s3_key: MyString
