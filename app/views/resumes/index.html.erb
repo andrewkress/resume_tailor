@@ -1,9 +1,22 @@
-<h1>My Résumés</h1>
-<%= link_to "Upload New Résumé", new_resume_path %>
+<!-- Stats Summary -->
+<%= render partial: 'stats' %>
 
-<% @resumes.each do |resume| %>
+<!-- Page Header -->
+<div class="flex items-center justify-between mb-6">
   <div>
-    <%= link_to "Résumé ##{resume.id}", resume_path(resume) %>
-    — <%= resume.status %> — <%= resume.created_at.strftime("%b %d, %Y") %>
+    <h2 class="text-xl font-semibold text-gray-900">All Résumés</h2>
+    <p class="text-gray-500 text-sm">Your uploaded résumés and their optimization status</p>
   </div>
-<% end %>
+  <%= link_to "Upload New Résumé", new_resume_path, class: "btn-primary" %>
+</div>
+
+<!-- Resume List -->
+<div class="space-y-4">
+  <% if @resumes.empty? %>
+    <%= render partial: 'empty_state' %>
+  <% else %>
+    <% @resumes.each do |resume| %>
+      <%= render partial: 'resume_card', locals: { resume: resume } %>
+    <% end %>
+  <% end %>
+</div>

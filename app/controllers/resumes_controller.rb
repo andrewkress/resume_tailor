@@ -3,6 +3,18 @@ class ResumesController < ApplicationController
 
   def index
     @resumes = current_user.resumes.order(created_at: :desc)
+
+    # Calculate stats for dashboard
+    total = @resumes.count
+    completed = @resumes.count { |r| r.status == 'completed' }
+    processing = @resumes.count { |r| r.status == 'processing' }
+    failed = @resumes.count { |r| r.status == 'failed' }
+    @stats = {
+      total: total,
+      completed: completed,
+      processing: processing,
+      failed: failed
+    }
   end
 
   def new

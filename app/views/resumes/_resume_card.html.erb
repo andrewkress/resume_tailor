@@ -1,0 +1,38 @@
+<div class="card hover:shadow-lg transition-shadow duration-200 group">
+  <div class="flex items-start justify-between">
+    <div class="flex-1 pr-4">
+      <h2 class="text-lg font-semibold text-gray-900 mb-2 group-hover:text-primary-600 transition-colors">
+        <%= link_to "Résumé ##{resume.id}", resume_path(resume) %>
+      </h2>
+      <div class="flex items-center space-x-4 text-sm text-gray-500">
+        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+          <%= case resume.status
+             when 'completed' then 'bg-green-100 text-green-800'
+             when 'processing' then 'bg-yellow-100 text-yellow-800'
+             when 'failed' then 'bg-red-100 text-red-800'
+             else 'bg-gray-100 text-gray-800'
+             end %>">
+          <%= resume.status.capitalize %>
+        </span>
+        <span>Created: <%= resume.created_at.strftime("%b %d, %Y") %></span>
+        <span>Last updated: <%= resume.updated_at.strftime("%b %d, %Y") %></span>
+      </div>
+      <% if resume.job_description.present? %>
+        <p class="mt-3 text-sm text-gray-600 line-clamp-2">
+          <%= simple_format h(resume.job_description) %>
+        </p>
+      <% end %>
+    </div>
+    <div class="flex items-center space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
+      <% if resume.status == 'completed' && resume.optimized_resumes.any? %>
+        <% resume.optimized_resumes.each do |opt| %>
+          <%= link_to opt.pdf, target: "_blank", class: "text-green-600 hover:text-green-700 p-2 hover:bg-green-50 rounded-lg transition-colors" do %>
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+            </svg>
+          <% end %>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+</div>
