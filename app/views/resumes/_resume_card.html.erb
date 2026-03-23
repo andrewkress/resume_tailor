@@ -15,12 +15,23 @@
           <%= resume.status.capitalize %>
         </span>
         <span>Created: <%= resume.created_at.strftime("%b %d, %Y") %></span>
-        <span>Last updated: <%= resume.updated_at.strftime("%b %d, %Y") %></span>
       </div>
-      <% if resume.job_description.present? %>
-        <p class="mt-3 text-sm text-gray-600 line-clamp-2">
-          <%= simple_format h(resume.job_description) %>
+      <% if resume.company_name.present? %>
+        <p class="mt-2 text-sm text-gray-600">
+          <span class="font-medium text-gray-900">Company:</span> <%= resume.company_name %>
         </p>
+        <% if resume.application_link.present? %>
+          <div class="flex items-center space-x-2 mt-1">
+            <span class="text-xs text-primary-600 flex items-center">
+              <%= link_to resume.application_link, resume.application_link, target: "_blank", class: "text-primary-600 hover:text-primary-700 hover:underline" do %>
+                <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+                </svg>
+                Apply Now
+              <% end %>
+            </span>
+          </div>
+        <% end %>
       <% end %>
     </div>
     <div class="flex items-center space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -30,6 +41,7 @@
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
             </svg>
+            Download
           <% end %>
         <% end %>
       <% end %>

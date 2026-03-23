@@ -23,12 +23,35 @@
   </div>
 
   <div>
+    <%= f.label :company_name, "Company Name" do %>
+      Company Name
+    <% end %>
+    <%= f.text_field :company_name,
+      placeholder: "e.g., Google, Meta, Apple",
+      class: "w-full px-4 py-3 border border-gray-300 rounded-lg text-gray-900
+               focus:ring-2 focus:ring-primary-500 focus:border-primary-500
+               outline-none transition-all text-sm",
+      autofocus: true %>
+  </div>
+
+  <div>
+    <%= f.label :application_link, "Application Link" do %>
+      Application Link
+    <% end %>
+    <%= f.text_field :application_link,
+      placeholder: "e.g., https://careers.example.com/apply/123",
+      class: "w-full px-4 py-3 border border-gray-300 rounded-lg text-gray-900
+               focus:ring-2 focus:ring-primary-500 focus:border-primary-500
+               outline-none transition-all text-sm" %>
+  </div>
+
+  <div>
     <%= f.label :job_description, "Job Description" do %>
       Paste the job description you want to tailor your résumé for
     <% end %>
     <%= f.text_area :job_description,
       rows: 12,
-      placeholder: "Paste the full job description here...\n\nTips:\n- Include the company name\n- List required skills and qualifications\n- Note key responsibilities",
+      placeholder: "Paste the full job description here...\n\nTips:\n- List required skills and qualifications\n- Note key responsibilities",
       class: "w-full px-4 py-3 border border-gray-300 rounded-lg text-gray-900
                focus:ring-2 focus:ring-primary-500 focus:border-primary-500
                outline-none transition-all text-sm" %>
