@@ -4,17 +4,33 @@ class ResumesController < ApplicationController
   def index
     @resumes = current_user.resumes.order(created_at: :desc)
 
+    # Handle filter parameter
+    filter = params[:filter]&.to_sym
+    case filter
+    when :completed
+      @resumes = @resumes.where(status: "completed")
+    when :processing
+      @resumes = @resumes.where(status: "processing")
+    when :failed
+      @resumes = @resumes.where(status: "failed")
+    else
+      # Default: show all resumes
+    end
+
     # Calculate stats for dashboard
-    total = @resumes.count
-    completed = @resumes.count { |r| r.status == "completed" }
-    processing = @resumes.count { |r| r.status == "processing" }
-    failed = @resumes.count { |r| r.status == "failed" }
+    @resume_stats = current_user.resumes
+    total = @resume_stats.count
+    completed = @resume_stats.where(status: "completed").count
+    processing = @resume_stats.where(status: "processing").count
+    failed = @resume_stats.where(status: "failed").count
     @stats = {
       total: total,
       completed: completed,
       processing: processing,
       failed: failed
     }
+
+    @filter = filter
   end
 
   def new
@@ -40,6 +56,6 @@ class ResumesController < ApplicationController
   private
 
   def resume_params
-    params.require(:resume).permit(:job_description, :original_file)
+    params.require(:resume).permit(:job_description, :original_file, :company_name, :application_link)
   end
 end

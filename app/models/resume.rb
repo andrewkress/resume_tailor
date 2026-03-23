@@ -5,6 +5,8 @@ class Resume < ApplicationRecord
 
   validates :job_description, presence: true
   validates :original_file, presence: true
+  validates :company_name, length: { maximum: 255 }
+  validates :application_link, length: { maximum: 2048 }
 
   STATUSES = %w[pending processing completed failed].freeze
   validates :status, inclusion: { in: STATUSES }

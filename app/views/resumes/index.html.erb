@@ -4,10 +4,10 @@
 <!-- Page Header -->
 <div class="flex items-center justify-between mb-6">
   <div>
-    <h2 class="text-xl font-semibold text-gray-900">All Résumés</h2>
+    <h2 class="text-xl font-semibold text-gray-900"><%= @filter&.to_s&.humanize|| "All" %> Résumés</h2>
     <p class="text-gray-500 text-sm">Your uploaded résumés and their optimization status</p>
   </div>
-  <%= link_to "Upload New Résumé", new_resume_path, class: "btn-primary" %>
+  <%= link_to "Upload New Résumé", new_resume_path, class: "bg-gradient-to-br from-blue-500 to-blue-600 rounded p-4 text-white" %>
 </div>
 
 <!-- Resume List -->
