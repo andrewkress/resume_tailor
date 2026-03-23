@@ -1,3 +1,7 @@
+<div class="mb-4 bg-gray-100 rounded-xl p-3 text-sm text-gray-600">
+  Viewing <strong><%= @filter&.to_s&.humanize|| "All" %></strong> résumés
+</div>
+
 <div class="grid grid-cols-4 gap-4 mb-8">
   <!-- Total Résumés -->
   <div class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl p-4 text-white">
@@ -6,8 +10,10 @@
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
       </svg>
       <div>
-        <div class="text-2xl font-bold"><%= @stats[:total] %></div>
-        <div class="text-blue-100 text-sm">Total Résumés</div>
+        <%= link_to resumes_path, class: "text-white hover:text-blue-200" do %>
+          <div class="text-2xl font-bold"><%= @stats[:total] %></div>
+          <div class="text-blue-100 text-sm">Total Résumés</div>
+        <% end %>
       </div>
     </div>
   </div>
@@ -19,8 +25,10 @@
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
       </svg>
       <div>
-        <div class="text-2xl font-bold"><%= @stats[:completed] %></div>
-        <div class="text-green-100 text-sm">Completed</div>
+        <%= link_to resumes_path(filter: 'completed'), class: "text-white hover:text-green-200" do %>
+          <div class="text-2xl font-bold"><%= @stats[:completed] %></div>
+          <div class="text-green-100 text-sm">Completed</div>
+        <% end %>
       </div>
     </div>
   </div>
@@ -32,8 +40,10 @@
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
       </svg>
       <div>
-        <div class="text-2xl font-bold"><%= @stats[:processing] %></div>
-        <div class="text-yellow-100 text-sm">Processing</div>
+        <%= link_to resumes_path(filter: 'processing'), class: "text-white hover:text-yellow-200" do %>
+          <div class="text-2xl font-bold"><%= @stats[:processing] %></div>
+          <div class="text-yellow-100 text-sm">Processing</div>
+        <% end %>
       </div>
     </div>
   </div>
@@ -45,8 +55,10 @@
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
       </svg>
       <div>
-        <div class="text-2xl font-bold"><%= @stats[:failed] %></div>
-        <div class="text-red-100 text-sm">Failed</div>
+        <%= link_to resumes_path(filter: 'failed'), class: "text-white hover:text-red-200" do %>
+          <div class="text-2xl font-bold"><%= @stats[:failed] %></div>
+          <div class="text-red-100 text-sm">Failed</div>
+        <% end %>
       </div>
     </div>
   </div>
