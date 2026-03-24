@@ -1,6 +1,6 @@
 class OptimizedResumesController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_optimized_resume, only: [ :edit, :update ]
+  before_action :set_optimized_resume, only: [ :edit, :update, :destroy ]
 
   def edit; end
 
@@ -9,9 +9,16 @@ class OptimizedResumesController < ApplicationController
       markdown: optimized_resume_params[:markdown]
     )
 
+    @resume.update!(status: "processing") # Set resume back to processing to indicate it's being updated
     GeneratePdfJob.perform_later(new_optimized_resume.id)
 
     redirect_to @resume, notice: "Optimized resume updated! A new PDF is being generated."
+  end
+
+  def destroy
+    @optimized_resume.pdf.purge if @optimized_resume.pdf.attached?
+    @optimized_resume.destroy
+    redirect_to @resume, notice: "Optimized resume deleted."
   end
 
   private

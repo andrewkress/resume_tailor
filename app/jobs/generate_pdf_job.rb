@@ -3,15 +3,17 @@ class GeneratePdfJob < ApplicationJob
 
   def perform(optimized_resume_id)
     optimized_resume = OptimizedResume.find(optimized_resume_id)
-    markdown = optimized_resume.markdown
+    resume = optimized_resume.resume
 
-    # Convert Markdown to HTML
-    html_content = Kramdown::Document.new(markdown).to_html
-
-    # Generate PDF from HTML
-    pdf = WickedPdf.new.pdf_from_string(html_content)
+    # Generate PDF from Markdown
+    pdf = PdfGenerator.new(optimized_resume.markdown).generate
 
     # Attach PDF to the optimized resume
-    optimized_resume.pdf.attach(io: StringIO.new(pdf), filename: "optimized_resume_#{optimized_resume.id}.pdf", content_type: "application/pdf")
+    optimized_resume.pdf.attach(io: pdf, filename: "_#{resume.company_name}_resume.pdf", content_type: "application/pdf")
+
+    resume.update!(status: "completed")
+  rescue => e
+    resume&.update!(status: "failed")
+    raise e
   end
 end

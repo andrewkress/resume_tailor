@@ -18,7 +18,7 @@ class OptimizeResumeJob < ApplicationJob
     optimized_resume = resume.optimized_resumes.create!(
       markdown: optimized_text
     )
-    optimized_resume.pdf.attach!(io: pdf, filename: "_#{resume.company_name}_resume.pdf", content_type: "application/pdf")
+    optimized_resume.pdf.attach(io: pdf, filename: "_#{resume.company_name}_resume.pdf", content_type: "application/pdf")
     resume.update!(status: "completed")
   rescue => e
     resume&.update!(status: "failed")
