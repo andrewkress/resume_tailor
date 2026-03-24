@@ -14,8 +14,10 @@ class OptimizeResumeJob < ApplicationJob
     # 3. Generate PDF
     pdf = PdfGenerator.new(optimized_text).generate
 
-    # 4. Save the optimized resume PDF
-    optimized_resume = resume.optimized_resumes.create!
+    # 4. Save the optimized resume PDF and markdown
+    optimized_resume = resume.optimized_resumes.create!(
+      markdown: optimized_text
+    )
     optimized_resume.pdf.attach(io: pdf, filename: "_#{resume.company_name}_resume.pdf", content_type: "application/pdf")
     resume.update!(status: "completed")
   rescue => e

@@ -44,6 +44,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_23_000345) do
 
   create_table "optimized_resumes", force: :cascade do |t|
     t.datetime "created_at", null: false
+    t.text "markdown"
     t.bigint "resume_id", null: false
     t.datetime "updated_at", null: false
     t.index ["resume_id"], name: "index_optimized_resumes_on_resume_id"
