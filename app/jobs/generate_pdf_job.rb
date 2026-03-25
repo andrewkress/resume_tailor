@@ -4,6 +4,7 @@ class GeneratePdfJob < ApplicationJob
   def perform(optimized_resume_id)
     optimized_resume = OptimizedResume.find(optimized_resume_id)
     resume = optimized_resume.resume
+    resume.update!(status: "processing")
 
     # Generate PDF from Markdown
     pdf = PdfGenerator.new(optimized_resume.markdown).generate
