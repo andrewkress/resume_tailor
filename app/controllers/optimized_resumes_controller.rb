@@ -9,7 +9,7 @@ class OptimizedResumesController < ApplicationController
       markdown: optimized_resume_params[:markdown]
     )
 
-    @resume.update!(status: "processing") # Set resume back to processing to indicate it's being updated
+    @resume.update!(status: "pending")
     GeneratePdfJob.perform_later(new_optimized_resume.id)
 
     redirect_to @resume, notice: "Optimized resume updated! A new PDF is being generated."
