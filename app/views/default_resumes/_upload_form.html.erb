@@ -1,0 +1,14 @@
+<%= form_with url: upload_default_resume_path, method: :post, local: true do |form| %>
+  <div class="form-group">
+    <%= form.label :default_pdf, "Upload Resume (PDF or DOCX)" %>
+    <%= form.file_field :default_pdf, accept: ".pdf,.docx", onchange: "document.getElementById('markdown_editor').disabled = !this.value" %>
+    <% if default_resume.default_pdf.attached? %>
+      <p>Current file: <%= link_to_download default_resume.default_pdf %></p>
+    <% end %>
+  </div>
+
+  <div class="form-group">
+    <%= form.label :markdown, "Markdown Content (auto-filled from uploaded file)" %>
+    <%= form.text_area :markdown, rows: 20, id: "markdown_editor", placeholder: "Edit your resume markdown here..." %>
+  </div>
+<% end %>

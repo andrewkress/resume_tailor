@@ -6,7 +6,8 @@ class OptimizedResumesController < ApplicationController
 
   def update
     new_optimized_resume = @resume.optimized_resumes.create!(
-      markdown: optimized_resume_params[:markdown]
+      markdown: optimized_resume_params[:markdown],
+      model_used: "manual_edit"
     )
 
     @resume.update!(status: "pending")

@@ -42,7 +42,7 @@ class ResumesController < ApplicationController
     @resume.original_filename = params[:resume][:original_file]&.original_filename
 
     if @resume.save
-      OptimizeResumeJob.perform_later(@resume.id)
+      OptimizeResumeJob.perform_later(@resume.id, resume_params[:model])
       redirect_to @resume, notice: "Resume uploaded! Optimization is in progress."
     else
       render :new, status: :unprocessable_entity
@@ -56,6 +56,6 @@ class ResumesController < ApplicationController
   private
 
   def resume_params
-    params.require(:resume).permit(:job_description, :original_file, :company_name, :application_link)
+    params.require(:resume).permit(:job_description, :original_file, :model, :company_name, :application_link)
   end
 end

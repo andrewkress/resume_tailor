@@ -1,15 +1,28 @@
 class BedrockOptimizer
-  MODEL_ID = "us.anthropic.claude-sonnet-4-6"
+  MODELS = {
+    sonnet_4_6: "us.anthropic.claude-sonnet-4-6",
+    haiku_4_5: "anthropic.claude-haiku-4-5-20251001-v1:0",
+    gpt_oss_120: "openai.gpt-oss-120b-1:0",
+    gpt_oss_20: "openai.gpt-oss-20b-1:0"
+  }.freeze
 
-  def initialize(resume_text, job_description)
+  SONNET_4_6 = MODELS[:sonnet_4_6] # $3.00 per 1M tokens
+  HAIKU_4_5 = MODELS[:haiku_4_5] # $1.00 per 1M tokens
+  GPT_OSS_120 = MODELS[:gpt_oss_120] # $0.15 per 1M tokens
+  GPT_OSS_20 = MODELS[:gpt_oss_20] # $0.07 per 1M tokens
+
+  def initialize(resume_text, job_description, model)
     @resume_text = resume_text
     @job_description = job_description
+    @model = MODELS[model]
     @client = Aws::BedrockRuntime::Client.new(region: ENV["AWS_REGION"])
   end
 
   def optimize
+    return "Invalid model selected" unless @model
+
     response = @client.invoke_model(
-      model_id: MODEL_ID,
+      model_id: @model,
       content_type: "application/json",
       accept: "application/json",
       body: request_body.to_json

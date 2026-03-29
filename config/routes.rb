@@ -3,6 +3,13 @@ Rails.application.routes.draw do
 
   root "dashboard#index"
 
+  resources :default_resumes, only: [ :show, :new, :create, :edit, :update ] do
+    member do
+      get :edit_markdown
+      post :update_markdown
+    end
+  end
+
   resources :resumes, only: [ :index, :new, :create, :show ] do
     resources :optimized_resumes, only: [ :edit, :update, :destroy ], shallow: true
   end

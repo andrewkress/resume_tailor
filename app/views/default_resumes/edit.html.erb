@@ -1,0 +1,16 @@
+<div class="default-resume-edit">
+  <h1>Edit Default Resume</h1>
+
+  <% if @default_resume.default_pdf.attached? %>
+    <div class="current-file">
+      <strong>Current file:</strong>
+      <%= link_to_download @default_resume.default_pdf %>
+    </div>
+  <% end %>
+
+  <h2>Upload New Resume</h2>
+  <%= render partial: "upload_form", locals: { default_resume: @default_resume } %>
+
+  <h2>Or Edit Markdown Directly</h2>
+  <%= render "form" %>
+</div>

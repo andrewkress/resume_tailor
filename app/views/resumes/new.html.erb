@@ -46,6 +46,13 @@
   </div>
 
   <div>
+    <%= f.label :model, "Optimization Model" do %>
+      Select the model for optimizing your résumé
+    <% end %>
+    <%= f.select :model, options_for_select(BedrockOptimizer::MODELS.map { |k, v| [k.to_s.humanize, k] }), { prompt: "Select a model" }, { class: "w-full px-4 py-3 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all text-sm" } %>
+  </div>
+
+  <div>
     <%= f.label :job_description, "Job Description" do %>
       Paste the job description you want to tailor your résumé for
     <% end %>
