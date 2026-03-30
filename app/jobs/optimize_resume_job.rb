@@ -16,7 +16,8 @@ class OptimizeResumeJob < ApplicationJob
     end
 
     # 2. Optimize with Bedrock
-    optimized_text = BedrockOptimizer.new(text, resume.job_description, model).optimize
+    optimizer = BedrockOptimizer.new(text, resume.job_description, model)
+    optimized_text = optimizer.optimize
 
     # 3. Generate PDF
     pdf = PdfGenerator.new(optimized_text).generate
@@ -24,7 +25,7 @@ class OptimizeResumeJob < ApplicationJob
     # 4. Save the optimized resume PDF and markdown
     optimized_resume = resume.optimized_resumes.create!(
       markdown: optimized_text,
-      model_used: model
+      model_used: optimizer.model_name
     )
     optimized_resume.pdf.attach(io: pdf, filename: "#{user.first_name}#{user.last_name}_#{resume.company_name}_resume.pdf", content_type: "application/pdf")
     resume.update!(status: "completed")

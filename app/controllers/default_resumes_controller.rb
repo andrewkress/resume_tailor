@@ -3,19 +3,19 @@ class DefaultResumesController < ApplicationController
   before_action :set_default_resume, only: [ :show, :edit, :update, :update_markdown ]
 
   def show
-    @default_resume = current_user.default_resumes.find(params[:id])
+    @default_resume = current_user.default_resume
   end
 
   def new
-    @default_resume = current_user.default_resumes.new
+    @default_resume = current_user.default_resume || current_user.default_resume.new
   end
 
   def edit
-    @default_resume = current_user.default_resumes.find(params[:id])
+    @default_resume = current_user.default_resume
   end
 
   def create
-    @default_resume = current_user.default_resumes.new
+    @default_resume = current_user.default_resume || current_user.default_resume.new
     @default_resume.markdown = params[:default_resume][:markdown] if params[:default_resume][:markdown]
     @default_resume.status = params[:default_resume][:status] if params[:default_resume][:status]
 
@@ -32,7 +32,7 @@ class DefaultResumesController < ApplicationController
 
     if @default_resume.save
       # Delete any existing active default resume
-      current_user.default_resumes.find_by(status: "active").destroy rescue nil
+      current_user.default_resume.destroy rescue nil
       redirect_to resumes_path, notice: "Default resume created successfully."
     else
       redirect_to new_default_resume_path, alert: "Default resume could not be created: #{@default_resume.errors.full_messages.join(', ')}."
@@ -72,7 +72,7 @@ class DefaultResumesController < ApplicationController
   private
 
   def set_default_resume
-    @default_resume = current_user.default_resumes.find(params[:id])
+    @default_resume = current_user.default_resume
   rescue ActiveRecord::RecordNotFound
     redirect_to resumes_path, alert: "Default resume not found."
   end

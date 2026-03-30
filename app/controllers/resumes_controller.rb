@@ -53,6 +53,22 @@ class ResumesController < ApplicationController
     @resume = current_user.resumes.find(params[:id])
   end
 
+  def regenerate
+    @resume = current_user.resumes.find(params[:id])
+    latest_optimized_resume = @resume.optimized_resumes.order(created_at: :desc).first
+    model = params[:model]&.to_sym || latest_optimized_resume&.model_used&.to_sym || :sonnet_4_6
+
+    if latest_optimized_resume && model.to_s == latest_optimized_resume.model_used
+      redirect_to @resume, alert: "Selected model is the same as the current model."
+      return
+    end
+
+    OptimizeResumeJob.perform_later(@resume.id, model)
+    redirect_to @resume, notice: "New optimization is in progress!"
+  rescue => e
+    redirect_to @resume || resumes_path, alert: "Optimization failed: #{e.message}"
+  end
+
   private
 
   def resume_params

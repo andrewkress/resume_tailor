@@ -1,7 +1,7 @@
 <div class="default-resume-edit">
   <h1>Edit Default Resume</h1>
 
-  <% if @default_resume.default_pdf.attached? %>
+  <% if @default_resume&.default_pdf&.attached? %>
     <div class="current-file">
       <strong>Current file:</strong>
       <%= link_to_download @default_resume.default_pdf %>

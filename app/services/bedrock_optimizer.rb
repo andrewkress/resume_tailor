@@ -11,13 +11,6 @@ class BedrockOptimizer
   GPT_OSS_120 = MODELS[:gpt_oss_120] # $0.15 per 1M tokens
   GPT_OSS_20 = MODELS[:gpt_oss_20] # $0.07 per 1M tokens
 
-  def initialize(resume_text, job_description, model)
-    @resume_text = resume_text
-    @job_description = job_description
-    @model = MODELS[model]
-    @client = Aws::BedrockRuntime::Client.new(region: ENV["AWS_REGION"])
-  end
-
   def optimize
     return "Invalid model selected" unless @model
 
@@ -30,6 +23,17 @@ class BedrockOptimizer
 
     parsed = JSON.parse(response.body.read)
     parsed.dig("content", 0, "text")
+  end
+
+  attr_reader :model_name
+
+  def initialize(resume_text, job_description, model)
+    @resume_text = resume_text
+    @job_description = job_description
+    model_key = model.to_sym
+    @model = MODELS[model_key]
+    @model_name = model_key
+    @client = Aws::BedrockRuntime::Client.new(region: ENV["AWS_REGION"])
   end
 
   private

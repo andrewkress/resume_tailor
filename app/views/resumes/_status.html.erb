@@ -1,6 +1,7 @@
 <turbo-frame id="resume_<%= resume.id %>_status">
-  <% if resume.status == 'completed' %>
-    <!-- Completed Card -->
+  <% active_default_resume = resume.user.default_resume if resume.user.default_resume&.status == "active" %>
+
+  <% if resume.status == "completed" %>
     <div class="card mb-6">
       <div class="flex items-center space-x-3 mb-4">
         <svg class="w-8 h-8 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -8,49 +9,11 @@
         </svg>
         <div>
           <h2 class="text-xl font-semibold text-gray-900">Optimization Complete!</h2>
-          <p class="text-gray-500">Your résumé has been successfully optimized</p>
-        </div>
-      </div>
-      <div class="border-t border-gray-100 pt-4">
-        <h3 class="text-sm font-medium text-gray-700 mb-3">Generated Versions</h3>
-        <div class="space-y-3">
-          <% resume.optimized_resumes.each do |opt| %>
-            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
-              <div class="flex items-center space-x-3">
-                <svg class="w-8 h-8 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
-                </svg>
-                <span class="text-gray-700"><%= opt.pdf.filename %></span>
-              </div>
-              <div class="flex items-right">
-                <%= link_to optimized_resume_path(opt), data: { turbo_method: :delete, turbo_frame: "_top" }, confirm: "Are you sure?", class: "text-red-600 hover:text-red-700 font-medium flex items-center px-3 py-1.5 rounded-lg hover:bg-red-50 transition-colors" do %>
-                  <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m2-6v6m2-6v6m2-6v6"/>
-                  </svg>
-                  Delete
-                <% end %>
-                <%= link_to edit_optimized_resume_path(opt), data: { turbo_frame: "_top" }, class: "text-blue-600 hover:text-blue-700 font-medium flex items-center px-3 py-1.5 rounded-lg hover:bg-blue-50 transition-colors" do %>
-                  <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                  </svg>
-                  Edit
-                <% end %>
-                <% if opt.pdf.attached? %>
-                  <%= link_to opt.pdf, target: "_blank", class: "text-green-600 hover:text-green-700 font-medium flex items-center px-3 py-1.5 rounded-lg hover:bg-green-50 transition-colors" do %>
-                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
-                    </svg>
-                    Download
-                  <% end %>
-                <% end %>
-              </div>
-            </div>
-          <% end %>
+          <p class="text-gray-500">Your résumé has been successfully optimized.</p>
         </div>
       </div>
     </div>
-  <% elsif resume.status == 'processing' %>
-    <!-- Processing Card -->
+  <% elsif resume.status == "processing" %>
     <div class="card mb-6">
       <div class="flex items-center space-x-3 mb-4">
         <svg class="w-8 h-8 text-yellow-500 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -58,7 +21,7 @@
         </svg>
         <div>
           <h2 class="text-xl font-semibold text-gray-900">Optimizing Your Résumé...</h2>
-          <p class="text-gray-500">Please wait while we analyze and optimize your résumé</p>
+          <p class="text-gray-500">Please wait while we analyze and optimize your résumé.</p>
         </div>
       </div>
       <div class="bg-gray-50 rounded-lg p-4">
@@ -67,8 +30,7 @@
         </p>
       </div>
     </div>
-  <% elsif resume.status == 'pending' %>
-    <!-- Pending Card -->
+  <% elsif resume.status == "pending" %>
     <div class="card mb-6">
       <div class="flex items-center space-x-3 mb-4">
         <svg class="w-8 h-8 text-gray-400 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -76,12 +38,11 @@
         </svg>
         <div>
           <h2 class="text-xl font-semibold text-gray-900">Queued for Optimization...</h2>
-          <p class="text-gray-500">Your résumé is waiting to be processed</p>
+          <p class="text-gray-500">Your résumé is waiting to be processed.</p>
         </div>
       </div>
     </div>
   <% else %>
-    <!-- Failed Card -->
     <div class="card mb-6">
       <div class="flex items-center space-x-3 mb-4">
         <svg class="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -89,7 +50,67 @@
         </svg>
         <div>
           <h2 class="text-xl font-semibold text-gray-900">Optimization Failed</h2>
-          <p class="text-gray-500">Something went wrong. Please try again.</p>
+          <p class="text-gray-500">The latest optimization attempt failed, but any previously generated versions are still available below.</p>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <% if resume.optimized_resumes.any? %>
+    <div class="card mb-6">
+      <div class="border-t border-gray-100 pt-4">
+        <div class="flex flex-col gap-3 mb-4 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h3 class="text-sm font-medium text-gray-700">Generated Versions</h3>
+            <p class="text-xs text-gray-500 mt-1">
+              Based on your <%= active_default_resume ? "active default resume" : "uploaded resume" %>.
+            </p>
+          </div>
+          <% unless %w[pending processing].include?(resume.status) %>
+            <%= form_with url: regenerate_resume_path(resume), method: :post, local: true, class: "flex items-center space-x-2" do %>
+              <span class="text-xs text-gray-600 whitespace-nowrap">Regenerate with:</span>
+              <%= select_tag :model, options_for_select(BedrockOptimizer::MODELS.map { |k, _v| [k.to_s.humanize, k] }), prompt: "Select model", class: "text-sm border border-gray-300 rounded px-2 py-1 bg-white text-gray-700 focus:ring-2 focus:ring-primary-500 outline-none min-w-[120px]" %>
+              <%= button_tag type: :submit, class: "text-primary-600 hover:text-primary-700 font-medium flex items-center justify-center w-8 h-8 rounded-lg hover:bg-primary-50 transition-colors" do %>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                </svg>
+              <% end %>
+            <% end %>
+          <% end %>
+        </div>
+        <div class="space-y-3">
+          <% resume.optimized_resumes.order(created_at: :desc).each do |opt| %>
+            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+              <div class="flex items-center space-y-2">
+                <svg class="w-8 h-8 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                </svg>
+                <div class="flex-1">
+                  <span class="text-gray-700"><%= opt.pdf.filename %></span>
+                  <span class="text-xs text-gray-500 ml-2"><%= opt.model_used || "Default" %></span>
+                </div>
+              </div>
+              <div class="flex items-center space-x-2">
+                <%= link_to optimized_resume_path(opt), data: { turbo_method: :delete, turbo_frame: "_top" }, confirm: "Are you sure?", class: "text-red-600 hover:text-red-700 font-medium flex items-center justify-center w-8 h-8 rounded-lg hover:bg-red-50 transition-colors" do %>
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m2-6v6m2-6v6m2-6v6"/>
+                  </svg>
+                <% end %>
+                <%= link_to edit_optimized_resume_path(opt), data: { turbo_frame: "_top" }, class: "text-blue-600 hover:text-blue-700 font-medium flex items-center justify-center w-8 h-8 rounded-lg hover:bg-blue-50 transition-colors" do %>
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                  </svg>
+                <% end %>
+                <% if opt.pdf.attached? %>
+                  <%= link_to opt.pdf, target: "_blank", class: "text-green-600 hover:text-green-700 font-medium flex items-center justify-center w-8 h-8 rounded-lg hover:bg-green-50 transition-colors" do %>
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                    </svg>
+                  <% end %>
+                <% end %>
+              </div>
+            </div>
+          <% end %>
         </div>
       </div>
     </div>
