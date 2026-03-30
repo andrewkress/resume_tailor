@@ -3,7 +3,7 @@ class DefaultResume < ApplicationRecord
   has_one_attached :default_pdf
 
   validates :user_id, uniqueness: true
-  validates :markdown, presence: true, if: :content_provided?
+  validates :markdown, presence: true, unless: :content_provided?
 
   before_validation :populate_markdown_from_pdf
 
