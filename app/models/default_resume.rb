@@ -18,7 +18,7 @@ class DefaultResume < ApplicationRecord
   end
 
   def populate_markdown_from_pdf
-    extracted_markdown = ResumeTextExtractor.new(default_pdf).extract
+    extracted_markdown = ResumeMarkdownExtractor.new(default_pdf).extract
     update_columns(markdown: extracted_markdown, updated_at: Time.current)
   rescue => e
     Rails.logger.error("Error extracting markdown from default resume file: #{e.message}")

@@ -21,7 +21,7 @@ class DefaultResumeTest < ActiveSupport::TestCase
       content_type: "application/pdf"
     )
 
-    ResumeTextExtractor.stub(:new, stub(extract: "# Resume")) do
+    ResumeMarkdownExtractor.stub(:new, stub(extract: "# Resume")) do
       default_resume.save!
     end
 
