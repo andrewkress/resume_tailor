@@ -1,6 +1,5 @@
 class OptimizedResume < ApplicationRecord
-  MODELS = %w[sonnet_4_6 haiku_4_5 gpt_oss_120 gpt_oss_20 manual_edit].freeze
-
+  MODELS = BedrockOptimizer::MODELS.keys.map(&:to_s).push("manual_edit").freeze
   belongs_to :resume
   has_one_attached :pdf
   validates :markdown, presence: true

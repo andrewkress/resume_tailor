@@ -2,14 +2,16 @@ class BedrockOptimizer
   MODELS = {
     sonnet_4_6: "us.anthropic.claude-sonnet-4-6",
     haiku_4_5: "us.anthropic.claude-haiku-4-5-20251001-v1:0",
-    gpt_oss_120: "openai.gpt-oss-120b-1:0",
-    gpt_oss_20: "openai.gpt-oss-20b-1:0"
+    llama_4_maverick: "us.meta.llama4-maverick-17b-instruct-v1:0",
+    llama_4_scout: "us.meta.llama4-scout-17b-instruct-v1:0",
+    nova_2_lite: "us.amazon.nova-2-lite-v1:0"
   }.freeze
 
   SONNET_4_6 = MODELS[:sonnet_4_6] # $3.00 per 1M tokens
   HAIKU_4_5 = MODELS[:haiku_4_5] # $1.00 per 1M tokens
-  GPT_OSS_120 = MODELS[:gpt_oss_120] # $0.15 per 1M tokens
-  GPT_OSS_20 = MODELS[:gpt_oss_20] # $0.07 per 1M tokens
+  LLAMA_4_MAVERICK = MODELS[:llama_4_maverick] # $0.24 per 1M tokens
+  LLAMA_4_SCOUT = MODELS[:llama_4_scout] # $0.17 per 1M tokens
+  NOVA_2_LITE = MODELS[:nova_2_lite] # $0.30 per 1M tokens
 
   def optimize
     return "Invalid model selected" unless @model
