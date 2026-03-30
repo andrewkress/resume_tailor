@@ -38,9 +38,10 @@ class ResumesController < ApplicationController
   end
 
   def create
-    @resume = current_user.resumes.build(resume_params)
+    @resume = current_user.resumes.build(resume_params.except(:model))
     @resume.original_filename = params[:resume][:original_file]&.original_filename
 
+    # debugger
     if @resume.save
       OptimizeResumeJob.perform_later(@resume.id, resume_params[:model])
       redirect_to @resume, notice: "Resume uploaded! Optimization is in progress."

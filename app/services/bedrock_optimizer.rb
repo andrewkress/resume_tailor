@@ -1,7 +1,7 @@
 class BedrockOptimizer
   MODELS = {
     sonnet_4_6: "us.anthropic.claude-sonnet-4-6",
-    haiku_4_5: "anthropic.claude-haiku-4-5-20251001-v1:0",
+    haiku_4_5: "us.anthropic.claude-haiku-4-5-20251001-v1:0",
     gpt_oss_120: "openai.gpt-oss-120b-1:0",
     gpt_oss_20: "openai.gpt-oss-20b-1:0"
   }.freeze
