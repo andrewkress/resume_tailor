@@ -1,11 +1,16 @@
-# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+# Read about fixtures at https://app://openapp/v1/os/fs/read?path=%2FUsers%2Fandy%2FDocuments%2Fresume_tailor%2Ftest%2Ffixtures%2Fusers.yml&mode=read&tool_name=Read
 
-# This model initially had no columns defined. If you add columns to the
-# model remove the "{}" from the fixture names and add the columns immediately
-# below each fixture, per the syntax in the comments below
-#
-one: {}
-# column: value
-#
-two: {}
-# column: value
+# These fixtures provide shared users that can be reused across tests
+# to avoid creating new users (and duplicate emails) each time
+
+default_user:
+  email: "test@example.com"
+  encrypted_password: <%= Devise::Encryptor.digest(User, 'password123') %>
+
+user_for_resume_tests:
+  email: "resume_test@example.com"
+  encrypted_password: <%= Devise::Encryptor.digest(User, 'password123') %>
+
+user_for_another_test:
+  email: "another_test@example.com"
+  encrypted_password:  <%= Devise::Encryptor.digest(User, 'password123') %>

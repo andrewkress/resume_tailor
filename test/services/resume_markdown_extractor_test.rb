@@ -2,23 +2,25 @@ require "test_helper"
 
 class ResumeMarkdownExtractorTest < ActiveSupport::TestCase
   test "formats extracted text into markdown with the ruby formatter by default" do
-    text_extractor = stub(new: stub(extract: "Jane Doe\nEXPERIENCE\n- Shipped features"))
-    formatter = stub(new: stub(format: "# Jane Doe\n\n## Experience\n- Shipped features"))
-    ai_formatter = stub(new: stub(format: "# AI Markdown"))
+    with_env("AWS_REGION", nil) do
+      text_extractor = stub(new: stub(extract: "Jane Doe\nEXPERIENCE\n- Shipped features"))
+      formatter = stub(new: stub(format: "# Jane Doe\n\n## Experience\n- Shipped features"))
+      ai_formatter = stub(new: stub(format: "# AI Markdown"))
 
-    markdown = ResumeMarkdownExtractor.new(
-      Object.new,
-      text_extractor: text_extractor,
-      formatter: formatter,
-      ai_formatter: ai_formatter
-    ).extract
+      markdown = ResumeMarkdownExtractor.new(
+        Object.new,
+        text_extractor: text_extractor,
+        formatter: formatter,
+        ai_formatter: ai_formatter
+      ).extract
 
-    assert_equal "# Jane Doe\n\n## Experience\n- Shipped features", markdown
+      assert_equal "# Jane Doe\n\n## Experience\n- Shipped features", markdown
+    end
   end
 
-  test "uses ai fallback when the ruby formatter output looks too thin" do
+  test "uses haiku to format extracted text when ai is available" do
     with_env("AWS_REGION", "us-east-1") do
-      text_extractor = stub(new: stub(extract: "Jane Doe"))
+      text_extractor = stub(new: stub(extract: "Jane Doe\nEXPERIENCE\nBuilt features"))
       formatter = stub(new: stub(format: "# Jane Doe"))
       ai_formatter = stub(new: stub(format: "# Jane Doe\n\n## Experience\n- Led projects"))
 
