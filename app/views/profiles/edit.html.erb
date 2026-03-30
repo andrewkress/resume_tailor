@@ -1,0 +1,83 @@
+<div class="space-y-8">
+  <div>
+    <h1 class="text-2xl font-semibold text-gray-900">Profile</h1>
+    <p class="mt-1 text-sm text-gray-500">
+      Manage your personal details and the default resume used as the base for tailoring.
+    </p>
+  </div>
+
+  <% if @user.errors.any? || @user.default_resume&.errors&.any? %>
+    <div class="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+      <p class="font-medium">We couldn't save your profile.</p>
+      <ul class="mt-2 list-disc pl-5">
+        <% @user.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+        <% @user.default_resume&.errors&.full_messages&.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <%= form_with model: @user, url: profile_path, method: :patch, local: true, class: "space-y-8" do |form| %>
+    <section class="rounded-xl border border-gray-200 bg-white p-6 space-y-4">
+      <div>
+        <h2 class="text-lg font-medium text-gray-900">Personal Details</h2>
+        <p class="mt-1 text-sm text-gray-500">These details help name generated resume files.</p>
+      </div>
+
+      <div class="grid gap-4 md:grid-cols-2">
+        <div>
+          <%= form.label :first_name, class: "block text-sm font-medium text-gray-700" %>
+          <%= form.text_field :first_name, class: "mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm" %>
+        </div>
+
+        <div>
+          <%= form.label :last_name, class: "block text-sm font-medium text-gray-700" %>
+          <%= form.text_field :last_name, class: "mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm" %>
+        </div>
+      </div>
+
+      <div>
+        <span class="block text-sm font-medium text-gray-700">Email</span>
+        <p class="mt-1 text-sm text-gray-500"><%= @user.email %></p>
+      </div>
+    </section>
+
+    <section class="rounded-xl border border-gray-200 bg-white p-6 space-y-4">
+      <div>
+        <h2 class="text-lg font-medium text-gray-900">Default Resume</h2>
+        <p class="mt-1 text-sm text-gray-500">
+          This is a single saved base resume for your account. If present, new optimizations start from this content instead of the uploaded file.
+        </p>
+      </div>
+
+      <%= form.fields_for :default_resume do |default_resume_fields| %>
+        <%= default_resume_fields.hidden_field :id if default_resume_fields.object.persisted? %>
+
+        <% if default_resume_fields.object.persisted? && default_resume_fields.object.default_pdf.attached? && default_resume_fields.object.default_pdf.blob&.persisted? %>
+          <div class="rounded-lg bg-gray-50 px-4 py-3 text-sm text-gray-600">
+            Current file:
+            <%= link_to default_resume_fields.object.default_pdf.filename.to_s, default_resume_fields.object.default_pdf, target: "_blank", class: "font-medium text-blue-600 hover:text-blue-700" %>
+          </div>
+        <% end %>
+
+        <div>
+          <%= default_resume_fields.label :default_pdf, "Upload Resume (PDF or DOCX)", class: "block text-sm font-medium text-gray-700" %>
+          <%= default_resume_fields.file_field :default_pdf, accept: ".pdf,.doc,.docx", include_hidden: false, class: "mt-1 block w-full text-sm text-gray-600" %>
+        </div>
+
+        <div>
+          <%= default_resume_fields.label :markdown, "Resume Markdown", class: "block text-sm font-medium text-gray-700" %>
+          <%= default_resume_fields.text_area :markdown, rows: 20, placeholder: "Paste or edit the base resume markdown here...", class: "mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm font-mono" %>
+        </div>
+      <% end %>
+    </section>
+
+    <div class="flex items-center justify-between">
+      <%= link_to "Back to Dashboard", resumes_path, class: "text-sm text-gray-600 hover:text-gray-900" %>
+      <%= form.submit "Save Profile", class: "rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700" %>
+    </div>
+  <% end %>
+</div>
