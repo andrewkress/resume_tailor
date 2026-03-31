@@ -6,14 +6,11 @@
     </p>
   </div>
 
-  <% if @user.errors.any? || @user.default_resume&.errors&.any? %>
+  <% if @user.errors.any? %>
     <div class="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
       <p class="font-medium">We couldn't save your profile.</p>
       <ul class="mt-2 list-disc pl-5">
         <% @user.errors.full_messages.each do |message| %>
-          <li><%= message %></li>
-        <% end %>
-        <% @user.default_resume&.errors&.full_messages&.each do |message| %>
           <li><%= message %></li>
         <% end %>
       </ul>
@@ -53,26 +50,18 @@
         </p>
       </div>
 
-      <%= form.fields_for :default_resume do |default_resume_fields| %>
-        <%= default_resume_fields.hidden_field :id if default_resume_fields.object.persisted? %>
 
-        <% if default_resume_fields.object.persisted? && default_resume_fields.object.default_pdf.attached? && default_resume_fields.object.default_pdf.blob&.persisted? %>
-          <div class="rounded-lg bg-gray-50 px-4 py-3 text-sm text-gray-600">
-            Current file:
-            <%= link_to default_resume_fields.object.default_pdf.filename.to_s, default_resume_fields.object.default_pdf, target: "_blank", class: "font-medium text-blue-600 hover:text-blue-700" %>
-          </div>
-        <% end %>
-
-        <div>
-          <%= default_resume_fields.label :default_pdf, "Upload Resume (PDF or DOCX)", class: "block text-sm font-medium text-gray-700" %>
-          <%= default_resume_fields.file_field :default_pdf, accept: ".pdf,.doc,.docx", include_hidden: false, class: "mt-1 block w-full text-sm text-gray-600" %>
-        </div>
-
-        <div>
-          <%= default_resume_fields.label :markdown, "Resume Markdown", class: "block text-sm font-medium text-gray-700" %>
-          <%= default_resume_fields.text_area :markdown, rows: 20, placeholder: "Paste or edit the base resume markdown here...", class: "mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm font-mono" %>
+      <% if form.object.persisted? && form.object.default_pdf.attached? && form.object.default_pdf.blob&.persisted? %>
+        <div class="rounded-lg bg-gray-50 px-4 py-3 text-sm text-gray-600">
+          Current file:
+          <%= link_to form.object.default_pdf.filename.to_s, form.object.default_pdf, target: "_blank", class: "font-medium text-blue-600 hover:text-blue-700" %>
         </div>
       <% end %>
+
+      <div>
+        <%= form.label :default_pdf, "Upload Resume (PDF or DOCX)", class: "block text-sm font-medium text-gray-700" %>
+        <%= form.file_field :default_pdf, accept: ".pdf,.doc,.docx", include_hidden: false, class: "mt-1 block w-full text-sm text-gray-600" %>
+      </div>
     </section>
 
     <div class="flex items-center justify-between">

@@ -1,5 +1,4 @@
 <turbo-frame id="resume_<%= resume.id %>_status">
-  <% saved_default_resume = resume.user.default_resume if resume.user.default_resume&.markdown.present? %>
 
   <% if resume.status == "completed" %>
     <div class="card mb-6">
@@ -63,7 +62,7 @@
           <div>
             <h3 class="text-sm font-medium text-gray-700">Generated Versions</h3>
             <p class="text-xs text-gray-500 mt-1">
-              Based on your <%= saved_default_resume ? "saved base resume" : "uploaded resume" %>.
+              Based on your uploaded resume.
             </p>
           </div>
           <% unless %w[pending processing].include?(resume.status) %>
