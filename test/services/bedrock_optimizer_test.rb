@@ -14,8 +14,7 @@ class BedrockOptimizerTest < ActiveSupport::TestCase
       assert_includes body.dig("messages", 0, "content"), "RÉSUMÉ:"
     end
 
-    optimizer = BedrockOptimizer.new("Resume text", "Job description", :haiku_4_5)
-    optimizer.instance_variable_set(:@client, client)
+    optimizer = BedrockOptimizer.new("Resume text", "Job description", :haiku_4_5, client: client)
 
     assert_equal "Optimized resume", optimizer.optimize
   end
@@ -33,8 +32,7 @@ class BedrockOptimizerTest < ActiveSupport::TestCase
       assert_includes body["prompt"], "RESUME:"
     end
 
-    optimizer = BedrockOptimizer.new("Resume text", "Job description", :llama_4_scout)
-    optimizer.instance_variable_set(:@client, client)
+    optimizer = BedrockOptimizer.new("Resume text", "Job description", :llama_4_scout, client: client)
 
     assert_equal "Tailored output", optimizer.optimize
   end
@@ -61,8 +59,7 @@ class BedrockOptimizerTest < ActiveSupport::TestCase
       assert_equal 0.5, body.dig("inferenceConfig", "temperature")
     end
 
-    optimizer = BedrockOptimizer.new("Resume text", "Job description", :nova_2_lite)
-    optimizer.instance_variable_set(:@client, client)
+    optimizer = BedrockOptimizer.new("Resume text", "Job description", :nova_2_lite, client: client)
 
     assert_equal "Tailored line 1\nTailored line 2", optimizer.optimize
   end

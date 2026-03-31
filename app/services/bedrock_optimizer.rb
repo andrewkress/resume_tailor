@@ -12,6 +12,7 @@ class BedrockOptimizer
   LLAMA_4_MAVERICK = MODELS[:llama_4_maverick] # $0.24 per 1M tokens
   LLAMA_4_SCOUT = MODELS[:llama_4_scout] # $0.17 per 1M tokens
   NOVA_2_LITE = MODELS[:nova_2_lite] # $0.30 per 1M tokens
+  # TODO add other models
 
   def optimize
     return "Invalid model selected" unless @model
@@ -29,13 +30,13 @@ class BedrockOptimizer
 
   attr_reader :model_name
 
-  def initialize(resume_text, job_description, model)
+  def initialize(resume_text, job_description, model, client: nil)
     @resume_text = resume_text
     @job_description = job_description
     model_key = model.to_sym
     @model = MODELS[model_key]
     @model_name = model_key
-    @client = Aws::BedrockRuntime::Client.new(region: ENV["AWS_REGION"])
+    @client = client || Aws::BedrockRuntime::Client.new(region: ENV["AWS_REGION"])
   end
 
   private
