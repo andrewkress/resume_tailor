@@ -6,7 +6,7 @@ class OptimizeResumeJob < ApplicationJob
     user = resume.user
     resume.update!(status: "processing")
 
-    text = ResumeTextExtractor.new(resume.original_file).extract
+    text = ResumeTextExtractor.new(resume.optimization_source_attachment).extract
 
     optimizer = BedrockOptimizer.new(text, resume.job_description, model)
     optimized_text = optimizer.optimize

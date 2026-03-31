@@ -41,8 +41,8 @@ class ResumesController < ApplicationController
     @resume = current_user.resumes.build(resume_params.except(:model))
     @resume.original_filename = params[:resume][:original_file]&.original_filename
 
-    # debugger
     if @resume.save
+      @resume.snapshot_optimization_source!
       OptimizeResumeJob.perform_later(@resume.id, resume_params[:model])
       redirect_to @resume, notice: "Resume uploaded! Optimization is in progress."
     else
@@ -56,6 +56,8 @@ class ResumesController < ApplicationController
 
   def regenerate
     @resume = current_user.resumes.find(params[:id])
+    redirect_to root_path, alert: "Resume not found" unless @resume
+
     latest_optimized_resume = @resume.optimized_resumes.order(created_at: :desc).first
     model = params[:model]&.to_sym || latest_optimized_resume&.model_used&.to_sym || :sonnet_4_6
 
@@ -67,7 +69,7 @@ class ResumesController < ApplicationController
     OptimizeResumeJob.perform_later(@resume.id, model)
     redirect_to @resume, notice: "New optimization is in progress!"
   rescue => e
-    redirect_to @resume || resumes_path, alert: "Optimization failed: #{e.message}"
+    redirect_to @resume || resumes_path, alert: "Optimization failed"
   end
 
   private

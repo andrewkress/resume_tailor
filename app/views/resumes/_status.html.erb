@@ -62,7 +62,7 @@
           <div>
             <h3 class="text-sm font-medium text-gray-700">Generated Versions</h3>
             <p class="text-xs text-gray-500 mt-1">
-              Based on your uploaded resume.
+              Based on the frozen <%= resume.optimization_source_label.downcase %> snapshot saved on this resume.
             </p>
           </div>
           <% unless %w[pending processing].include?(resume.status) %>
