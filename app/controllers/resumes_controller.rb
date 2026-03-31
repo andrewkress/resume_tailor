@@ -68,7 +68,7 @@ class ResumesController < ApplicationController
 
     OptimizeResumeJob.perform_later(@resume.id, model)
     redirect_to @resume, notice: "New optimization is in progress!"
-  rescue => e
+  rescue => _e
     redirect_to @resume || resumes_path, alert: "Optimization failed"
   end
 

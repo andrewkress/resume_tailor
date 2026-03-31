@@ -22,7 +22,6 @@ gem "aws-sdk-bedrockruntime"
 gem "aws-sdk-s3"
 gem "prawn"
 gem "prawn-table"
-gem "prawndown"
 gem "docx"
 gem "pdf-reader"
 gem "sidekiq"
@@ -46,3 +45,5 @@ group :test do
   gem "capybara"
   gem "selenium-webdriver"
 end
+
+gem "kramdown", "~> 2.5"
