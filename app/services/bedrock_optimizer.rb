@@ -24,7 +24,7 @@ class BedrockOptimizer
     )
 
     parsed = JSON.parse(response.body.read)
-    parsed.dig("content", 0, "text")
+    extract_text(parsed)
   end
 
   attr_reader :model_name
@@ -41,6 +41,46 @@ class BedrockOptimizer
   private
 
   def request_body
+    return anthropic_request_body if @model.start_with?("us.anthropic")
+    return llama_request_body if @model.start_with?("us.meta.llama")
+    return nova_request_body if @model.start_with?("us.amazon.nova")
+
+    raise "Unsupported model: #{@model}"
+  end
+
+  def nova_request_body
+    {
+      system: [
+        {
+          text: system_prompt
+        }
+      ],
+      messages: [
+        {
+          role: "user",
+          content: [
+            {
+              text: user_prompt
+            }
+          ]
+        }
+      ],
+      inferenceConfig: {
+        maxTokens: 4096,
+        temperature: 0.5
+      }
+    }
+  end
+
+  def llama_request_body
+    {
+      prompt: llama_prompt,
+      max_gen_len: 512,
+      temperature: 0.5
+    }
+  end
+
+  def anthropic_request_body
     {
       anthropic_version: "bedrock-2023-05-31",
       max_tokens: 4096,
@@ -53,21 +93,62 @@ class BedrockOptimizer
     }
   end
 
+  def extract_text(parsed)
+    if @model.start_with?("us.anthropic")
+      parsed.dig("content", 0, "text").to_s.strip
+    elsif @model.start_with?("us.meta.llama")
+      parsed.fetch("generation", "").to_s.strip
+    elsif @model.start_with?("us.amazon.nova")
+      parsed.fetch("output", {})
+        .fetch("message", {})
+        .fetch("content", [])
+        .filter_map { |item| item["text"] }
+        .join("\n")
+        .strip
+    else
+      raise "Unsupported model: #{@model}"
+    end
+  end
+
   def prompt
     <<~PROMPT
-      You are an expert resume writer. Optimize the following résumé to best match the job description provided.
-
-      Keep the same general structure and truthful content, but:
-      - Tailor language and keywords to match the job description
-      - Strengthen bullet points with measurable impact where possible
-      - Ensure the most relevant experience is highlighted
-      - Return ONLY the optimized résumé text, no commentary
+      #{system_prompt}
 
       JOB DESCRIPTION:
       #{@job_description}
 
       RÉSUMÉ:
       #{@resume_text}
+    PROMPT
+  end
+
+  def system_prompt
+    <<~PROMPT
+      You are an expert resume writer. Optimize the following resume to best match the job description provided.
+
+      Keep the same general structure and truthful content, but:
+      - Tailor language and keywords to match the job description
+      - Strengthen bullet points with measurable impact where possible
+      - Ensure the most relevant experience is highlighted
+      - Return ONLY the optimized résumé text, no commentary
+    PROMPT
+  end
+
+  def user_prompt
+    <<~PROMPT
+      JOB DESCRIPTION:
+      #{@job_description}
+
+      RESUME:
+      #{@resume_text}
+    PROMPT
+  end
+
+  def llama_prompt
+    <<~PROMPT
+      <|begin_of_text|><|start_header_id|>system<|end_header_id|>
+      #{system_prompt}<|eot_id|><|start_header_id|>user<|end_header_id|>
+      #{user_prompt}<|eot_id|><|start_header_id|>assistant<|end_header_id|>
     PROMPT
   end
 end
