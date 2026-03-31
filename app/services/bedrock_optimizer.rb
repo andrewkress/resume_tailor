@@ -25,7 +25,7 @@ class BedrockOptimizer
     )
 
     parsed = JSON.parse(response.body.read)
-    extract_text(parsed)
+    Windows1252Sanitizer.call(extract_text(parsed))
   end
 
   attr_reader :model_name
@@ -132,6 +132,7 @@ class BedrockOptimizer
       - Strengthen bullet points with measurable impact where possible
       - Ensure the most relevant experience is highlighted
       - Return ONLY the optimized résumé text, no commentary
+      - Do not return characters that are not compatible with the Windows-1252 character set
     PROMPT
   end
 

@@ -19,6 +19,16 @@ class BedrockOptimizerTest < ActiveSupport::TestCase
     assert_equal "Optimized resume", optimizer.optimize
   end
 
+  test "sanitizes unsupported characters from model output" do
+    client = bedrock_client_stub(response_body: {
+      content: [ { text: "Built features\u2009with care \u2713" } ]
+    })
+
+    optimizer = BedrockOptimizer.new("Resume text", "Job description", :haiku_4_5, client: client)
+
+    assert_equal "Built features with care *", optimizer.optimize
+  end
+
   test "uses llama native request and response format" do
     client = bedrock_client_stub(response_body: { generation: "Tailored output" }) do |payload|
       assert_equal BedrockOptimizer::LLAMA_4_SCOUT, payload[:model_id]
