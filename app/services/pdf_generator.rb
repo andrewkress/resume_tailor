@@ -3,7 +3,7 @@ require "prawndown"
 
 class PdfGenerator
   def initialize(optimized_text)
-    @optimized_text = optimized_text
+    @optimized_text = Windows1252Sanitizer.call(optimized_text)
   end
 
   def generate

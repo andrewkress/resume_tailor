@@ -5,4 +5,7 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :validatable
 
   has_many :resumes, dependent: :destroy
+  has_one_attached :default_pdf
+
+  accepts_nested_attributes_for :resumes, allow_destroy: true
 end

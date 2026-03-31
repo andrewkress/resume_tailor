@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_23_000345) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_31_120000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -45,6 +45,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_23_000345) do
   create_table "optimized_resumes", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.text "markdown"
+    t.string "model_used"
     t.bigint "resume_id", null: false
     t.datetime "updated_at", null: false
     t.index ["resume_id"], name: "index_optimized_resumes_on_resume_id"
@@ -55,6 +56,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_23_000345) do
     t.string "company_name"
     t.datetime "created_at", null: false
     t.text "job_description"
+    t.string "optimization_source_kind"
     t.string "original_filename"
     t.string "status"
     t.datetime "updated_at", null: false
@@ -66,6 +68,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_23_000345) do
     t.datetime "created_at", null: false
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
+    t.string "first_name"
+    t.string "last_name"
     t.datetime "remember_created_at"
     t.datetime "reset_password_sent_at"
     t.string "reset_password_token"
