@@ -88,7 +88,7 @@ production:
   primary: &primary_production
     <<: *default
     database: resume_tailor_production
-    username: resume_tailor
+    username: <%= ENV["RESUME_TAILOR_DATABASE_USERNAME"] %>
     password: <%= ENV["RESUME_TAILOR_DATABASE_PASSWORD"] %>
   cache:
     <<: *primary_production
