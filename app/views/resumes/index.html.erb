@@ -16,7 +16,7 @@
     <%= render partial: 'empty_state' %>
   <% else %>
     <% @resumes.each do |resume| %>
-      <%= render partial: 'resume_card', locals: { resume: resume } %>
+      <%= render partial: 'resume_card', locals: { resume: resume, latest_optimization: resume.optimized_resumes.last } %>
     <% end %>
   <% end %>
 </div>
