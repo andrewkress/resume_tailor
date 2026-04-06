@@ -118,4 +118,29 @@ class PdfGeneratorTest < ActiveSupport::TestCase
 
     assert_equal "\"quoted\" and 'single' and - and ...", rendered_text
   end
+
+  test "renders pipe-separated contact lines as paragraphs" do
+    fake_pdf = FakePdfDocument.new
+
+    prawn_stub = lambda do |_path, overwrite_content:, &block|
+      block.call(fake_pdf)
+    end
+
+    markdown = <<~MARKDOWN
+      # John Doe
+
+      Menomonee Falls, WI 53051 | (262) 555-1234 | John.Doe@gmail.com
+
+      ## Career Summary
+    MARKDOWN
+
+    Prawn::Document.stub(:generate, prawn_stub) do
+      PdfGenerator.new(markdown).generate
+    end
+
+    contact_fragments = fake_pdf.formatted_text_calls[1].first
+    rendered_text = contact_fragments.map { |fragment| fragment[:text] }.join
+
+    assert_equal "Menomonee Falls, WI 53051 | (262) 555-1234 | John.Doe@gmail.com", rendered_text
+  end
 end

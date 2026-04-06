@@ -31,7 +31,7 @@ class PdfGenerator
     end
 
     def render(markdown)
-      document = Kramdown::Document.new(markdown.to_s)
+      document = Kramdown::Document.new(normalize_markdown(markdown))
 
       document.root.children.each do |element|
         render_block(element)
@@ -39,6 +39,12 @@ class PdfGenerator
     end
 
     private
+
+    def normalize_markdown(markdown)
+      markdown.to_s.lines.map do |line|
+        line.include?("|") ? line.gsub("|", "\\|") : line
+      end.join
+    end
 
     def render_block(element, list_depth: 0)
       case element.type
