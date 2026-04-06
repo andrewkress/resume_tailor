@@ -13,6 +13,12 @@ class Windows1252SanitizerTest < ActiveSupport::TestCase
     assert_equal "Lead Engineer | Built features\nShipped fixes - improved QA *", Windows1252Sanitizer.call(text)
   end
 
+  test "normalizes unicode hyphen variants instead of dropping them" do
+    text = "customer\u2010facing customer\u2011facing customer\u2012facing"
+
+    assert_equal "customer-facing customer-facing customer-facing", Windows1252Sanitizer.call(text)
+  end
+
   test "removes unsupported emoji" do
     text = "Growth \u{1F4C8} across products"
 

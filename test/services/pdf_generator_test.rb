@@ -53,6 +53,22 @@ class PdfGeneratorTest < ActiveSupport::TestCase
     assert_equal "Built features with care *", rendered_text
   end
 
+  test "preserves hyphenated words in rendered text" do
+    rendered_text = nil
+    fake_pdf = FakePdfDocument.new
+
+    prawn_stub = lambda do |_path, overwrite_content:, &block|
+      block.call(fake_pdf)
+      rendered_text = fake_pdf.formatted_text_calls.first.first.map { |fragment| fragment[:text] }.join
+    end
+
+    Prawn::Document.stub(:generate, prawn_stub) do
+      PdfGenerator.new("Built customer-facing tools").generate
+    end
+
+    assert_equal "Built customer-facing tools", rendered_text
+  end
+
   test "renders bullet lists and horizontal rules via kramdown" do
     fake_pdf = FakePdfDocument.new
 

@@ -94,6 +94,17 @@ class BedrockOptimizerTest < ActiveSupport::TestCase
     assert_equal "OpenAI tailored resume", optimizer.optimize
   end
 
+  test "preserves unicode hyphen variants from openai output" do
+    responses_api = stub(create: lambda do |parameters: nil, **kwargs|
+      { "output_text" => "Built customer\u2011facing tools" }
+    end)
+
+    client = stub(responses: responses_api)
+    optimizer = BedrockOptimizer.new("Resume text", "Job description", :gpt_oss_20, client: client)
+
+    assert_equal "Built customer-facing tools", optimizer.optimize
+  end
+
   private
 
   def bedrock_client_stub(response_body:)
