@@ -4,7 +4,10 @@ class BedrockOptimizer
     haiku_4_5: "us.anthropic.claude-haiku-4-5-20251001-v1:0",
     llama_4_maverick: "us.meta.llama4-maverick-17b-instruct-v1:0",
     llama_4_scout: "us.meta.llama4-scout-17b-instruct-v1:0",
-    nova_2_lite: "us.amazon.nova-2-lite-v1:0"
+    nova_2_lite: "us.amazon.nova-2-lite-v1:0",
+    gpt_oss_120: "openai.gpt-oss-120b",
+    gpt_oss_20: "openai.gpt-oss-20b"
+
   }.freeze
 
   SONNET_4_6 = MODELS[:sonnet_4_6] # $3.00 per 1M tokens
@@ -12,21 +15,9 @@ class BedrockOptimizer
   LLAMA_4_MAVERICK = MODELS[:llama_4_maverick] # $0.24 per 1M tokens
   LLAMA_4_SCOUT = MODELS[:llama_4_scout] # $0.17 per 1M tokens
   NOVA_2_LITE = MODELS[:nova_2_lite] # $0.30 per 1M tokens
+  GPT_OSS_120 = MODELS[:gpt_oss_120] # $0.15 per 1M tokens
+  GPT_OSS_20 = MODELS[:gpt_oss_20] # $0.07 per 1M tokens
   # TODO add other models
-
-  def optimize
-    return "Invalid model selected" unless @model
-
-    response = @client.invoke_model(
-      model_id: @model,
-      content_type: "application/json",
-      accept: "application/json",
-      body: request_body.to_json
-    )
-
-    parsed = JSON.parse(response.body.read)
-    Windows1252Sanitizer.call(extract_text(parsed))
-  end
 
   attr_reader :model_name
 
@@ -36,10 +27,20 @@ class BedrockOptimizer
     model_key = model.to_sym
     @model = MODELS[model_key]
     @model_name = model_key
-    @client = client || Aws::BedrockRuntime::Client.new(region: ENV["AWS_REGION"])
+    @client = client || (@model ? bedrock_client : nil)
   end
 
   private
+
+  def bedrock_client
+    return @bedrock_client if defined?(@bedrock_client)
+
+    @bedrock_client = if @model.start_with?("openai.gpt")
+      OpenAI::Client.new
+    else
+      Aws::BedrockRuntime::Client.new(region: ENV["AWS_REGION"])
+    end
+  end
 
   def request_body
     return anthropic_request_body if @model.start_with?("us.anthropic")
@@ -94,6 +95,22 @@ class BedrockOptimizer
     }
   end
 
+  def gpt_request_body
+    {
+      model: @model,
+      input: [
+        {
+          role: "system",
+          content: system_prompt
+        },
+        {
+          role: "user",
+          content: user_prompt
+        }
+      ]
+    }
+  end
+
   def extract_text(parsed)
     if @model.start_with?("us.anthropic")
       parsed.dig("content", 0, "text").to_s.strip
@@ -106,10 +123,58 @@ class BedrockOptimizer
         .filter_map { |item| item["text"] }
         .join("\n")
         .strip
+    elsif @model.start_with?("openai.gpt")
+      return parsed["output_text"].to_s.strip if parsed.is_a?(Hash)
+
+      parsed.output_text.to_s.strip
     else
       raise "Unsupported model: #{@model}"
     end
   end
+
+  public
+
+  def optimize
+    return "Invalid model selected" unless @model
+
+    raw_response = if @model.start_with?("openai.gpt")
+      invoke_openai_model
+    else
+      invoke_bedrock_model
+    end
+
+    Windows1252Sanitizer.call(extract_text(raw_response))
+  end
+
+  private
+
+  def invoke_bedrock_model
+    response = @client.invoke_model(
+      model_id: @model,
+      content_type: "application/json",
+      accept: "application/json",
+      body: request_body.to_json
+    )
+
+    JSON.parse(response.body.read)
+  end
+
+  def invoke_openai_model
+    @client.responses.create(**gpt_request_body)
+  end
+
+  # def extract_openai_text(parsed)
+  #   data = parsed.is_a?(Hash) ? parsed : (parsed.respond_to?(:to_h) ? parsed.to_h : {})
+
+  #   output_text = data["output_text"].to_s.strip
+  #   return output_text if output_text.present?
+
+  #   data.fetch("output", [])
+  #     .flat_map { |item| item.fetch("content", []) }
+  #     .filter_map { |item| item["text"] }
+  #     .join("\n")
+  #     .strip
+  # end
 
   def prompt
     <<~PROMPT
