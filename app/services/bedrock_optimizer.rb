@@ -17,9 +17,18 @@ class BedrockOptimizer
   NOVA_2_LITE = MODELS[:nova_2_lite] # $0.30 per 1M tokens
   GPT_OSS_120 = MODELS[:gpt_oss_120] # $0.15 per 1M tokens
   GPT_OSS_20 = MODELS[:gpt_oss_20] # $0.07 per 1M tokens
-  # TODO add other models
 
-  attr_reader :model_name
+  def optimize
+    return "Invalid model selected" unless @model
+
+    raw_response = if @model.start_with?("openai.gpt")
+      invoke_openai_model
+    else
+      invoke_bedrock_model
+    end
+
+    Windows1252Sanitizer.call(extract_text(raw_response))
+  end
 
   def initialize(resume_text, job_description, model, client: nil)
     @resume_text = resume_text
@@ -40,6 +49,21 @@ class BedrockOptimizer
     else
       Aws::BedrockRuntime::Client.new(region: ENV["AWS_REGION"])
     end
+  end
+
+  def invoke_bedrock_model
+    response = @client.invoke_model(
+      model_id: @model,
+      content_type: "application/json",
+      accept: "application/json",
+      body: request_body.to_json
+    )
+
+    JSON.parse(response.body.read)
+  end
+
+  def invoke_openai_model
+    @client.responses.create(**gpt_request_body)
   end
 
   def request_body
@@ -131,50 +155,6 @@ class BedrockOptimizer
       raise "Unsupported model: #{@model}"
     end
   end
-
-  public
-
-  def optimize
-    return "Invalid model selected" unless @model
-
-    raw_response = if @model.start_with?("openai.gpt")
-      invoke_openai_model
-    else
-      invoke_bedrock_model
-    end
-
-    Windows1252Sanitizer.call(extract_text(raw_response))
-  end
-
-  private
-
-  def invoke_bedrock_model
-    response = @client.invoke_model(
-      model_id: @model,
-      content_type: "application/json",
-      accept: "application/json",
-      body: request_body.to_json
-    )
-
-    JSON.parse(response.body.read)
-  end
-
-  def invoke_openai_model
-    @client.responses.create(**gpt_request_body)
-  end
-
-  # def extract_openai_text(parsed)
-  #   data = parsed.is_a?(Hash) ? parsed : (parsed.respond_to?(:to_h) ? parsed.to_h : {})
-
-  #   output_text = data["output_text"].to_s.strip
-  #   return output_text if output_text.present?
-
-  #   data.fetch("output", [])
-  #     .flat_map { |item| item.fetch("content", []) }
-  #     .filter_map { |item| item["text"] }
-  #     .join("\n")
-  #     .strip
-  # end
 
   def prompt
     <<~PROMPT
