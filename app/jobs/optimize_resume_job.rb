@@ -15,7 +15,7 @@ class OptimizeResumeJob < ApplicationJob
 
     optimized_resume = resume.optimized_resumes.create!(
       markdown: optimized_text,
-      model_used: optimizer.model_name
+      model_used: model
     )
     optimized_resume.pdf.attach(
       io: pdf,
