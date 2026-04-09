@@ -69,16 +69,19 @@
 
 <% if @resume.job_description.present? %>
   <!-- Job Description Preview -->
-  <div class="card">
+  <div class="card" data-controller="toggle-description">
     <div class="flex items-center space-x-2 mb-3">
       <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
       </svg>
       <h3 class="text-lg font-medium text-gray-900">Job Description</h3>
     </div>
-    <div class="bg-gray-50 rounded-lg p-4 text-sm text-gray-600">
+    <div class="bg-gray-50 rounded-lg p-4 text-sm text-gray-600" data-toggle-description-target="preview">
       <%= simple_format h(@resume.job_description.truncate(500)) %>
     </div>
-    <%= link_to "View Full Description", "#", class: "text-primary-600 hover:text-primary-700 text-sm mt-2", disabled: true %>
+    <div class="bg-gray-50 rounded-lg p-4 text-sm text-gray-600 hidden" data-toggle-description-target="full">
+      <%= simple_format h(@resume.job_description) %>
+    </div>
+    <%= link_to "View Full Description", "#", class: "text-primary-600 hover:text-primary-700 text-sm mt-2", data: { action: "click->toggle-description#toggle", toggle_description_target: "link" } %>
   </div>
 <% end %>
