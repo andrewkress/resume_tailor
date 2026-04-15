@@ -36,8 +36,7 @@ class ResumeAccessTest < ActionDispatch::IntegrationTest
       post regenerate_resume_path(@other_resume), params: { model: "sonnet_4_6" }
     end
 
-    assert_response :redirect
-    assert_equal "Optimization failed", flash[:alert]
+    assert_response :not_found
   end
 
   test "optimized resume edit returns not found for another users resume" do
