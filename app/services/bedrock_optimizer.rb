@@ -6,8 +6,8 @@ class BedrockOptimizer
     llama_4_scout: "us.meta.llama4-scout-17b-instruct-v1:0",
     nova_2_lite: "us.amazon.nova-2-lite-v1:0",
     gpt_oss_120: "openai.gpt-oss-120b",
-    gpt_oss_20: "openai.gpt-oss-20b"
-
+    gpt_oss_20: "openai.gpt-oss-20b",
+    glm_5: "zai.glm-5"
   }.freeze
 
   SONNET_4_6 = MODELS[:sonnet_4_6] # $3.00 per 1M tokens
@@ -17,6 +17,7 @@ class BedrockOptimizer
   NOVA_2_LITE = MODELS[:nova_2_lite] # $0.30 per 1M tokens
   GPT_OSS_120 = MODELS[:gpt_oss_120] # $0.15 per 1M tokens
   GPT_OSS_20 = MODELS[:gpt_oss_20] # $0.07 per 1M tokens
+  GLM_5 = MODELS[:glm_5] # $1.00 per 1M tokens
 
   def optimize
     return "Invalid model selected" unless @model
@@ -70,6 +71,7 @@ class BedrockOptimizer
     return anthropic_request_body if @model.start_with?("us.anthropic")
     return llama_request_body if @model.start_with?("us.meta.llama")
     return nova_request_body if @model.start_with?("us.amazon.nova")
+    return zai_request_body if @model.start_with?("zai.glm-5")
 
     raise "Unsupported model: #{@model}"
   end
@@ -135,6 +137,18 @@ class BedrockOptimizer
     }
   end
 
+  def zai_request_body
+    {
+      model: @model,
+      messages: [
+        {
+          role: "user",
+          content: prompt
+        }
+      ]
+    }
+  end
+
   def extract_text(parsed)
     if @model.start_with?("us.anthropic")
       parsed.dig("content", 0, "text").to_s.strip
@@ -151,6 +165,8 @@ class BedrockOptimizer
       return parsed["output_text"].to_s.strip if parsed.is_a?(Hash)
 
       parsed.output_text.to_s.strip
+    elsif @model.start_with?("zai.glm-5")
+      parsed.dig("choices", 0, "message", "content").to_s.strip
     else
       raise "Unsupported model: #{@model}"
     end
