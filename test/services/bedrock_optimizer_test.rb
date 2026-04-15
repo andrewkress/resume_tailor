@@ -105,6 +105,26 @@ class BedrockOptimizerTest < ActiveSupport::TestCase
     assert_equal "Built customer-facing tools", optimizer.optimize
   end
 
+  test "uses zai glm-5 request and response format" do
+    client = bedrock_client_stub(response_body: {
+      choices: [
+        { message: { content: "GLM-5 optimized resume" } }
+      ]
+    }) do |payload|
+      assert_equal BedrockOptimizer::GLM_5, payload[:model_id]
+
+      body = JSON.parse(payload[:body])
+      assert_equal "zai.glm-5", body["model"]
+      assert_equal "user", body.dig("messages", 0, "role")
+      assert_includes body.dig("messages", 0, "content"), "JOB DESCRIPTION:"
+      assert_includes body.dig("messages", 0, "content"), "RÉSUMÉ:"
+    end
+
+    optimizer = BedrockOptimizer.new("Resume text", "Job description", :glm_5, client: client)
+
+    assert_equal "GLM-5 optimized resume", optimizer.optimize
+  end
+
   private
 
   def bedrock_client_stub(response_body:)
