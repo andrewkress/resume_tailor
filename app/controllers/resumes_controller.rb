@@ -1,5 +1,6 @@
 class ResumesController < ApplicationController
   before_action :authenticate_user!
+  before_action :set_resume, only: [ :show, :destroy, :regenerate ]
 
   def index
     @resumes = current_user.resumes.order(created_at: :desc)
@@ -50,14 +51,14 @@ class ResumesController < ApplicationController
     end
   end
 
-  def show
-    @resume = current_user.resumes.find(params[:id])
+  def show; end
+
+  def destroy
+    @resume.destroy
+    redirect_to resumes_path, notice: "Resume was successfully deleted."
   end
 
   def regenerate
-    @resume = current_user.resumes.find(params[:id])
-    redirect_to root_path, alert: "Resume not found" unless @resume
-
     latest_optimized_resume = @resume.optimized_resumes.order(created_at: :desc).first
     model = params[:model]&.to_sym || latest_optimized_resume&.model_used&.to_sym || :sonnet_4_6
 
@@ -73,6 +74,11 @@ class ResumesController < ApplicationController
   end
 
   private
+
+  def set_resume
+    @resume = current_user.resumes.find(params[:id])
+    redirect_to root_path, alert: "Resume not found" unless @resume
+  end
 
   def resume_params
     params.require(:resume).permit(:job_description, :original_file, :model, :company_name, :application_link)

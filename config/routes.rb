@@ -5,7 +5,7 @@ Rails.application.routes.draw do
 
   resource :profile, only: [ :edit, :update ]
 
-  resources :resumes, only: [ :index, :new, :create, :show ] do
+  resources :resumes, only: [ :index, :new, :create, :show, :destroy ] do
     member do
       post :regenerate
     end
